@@ -134,3 +134,38 @@ class TestAccountService(TestCase):
         new_response = self.client.get(f'{BASE_URL}/{account.id}')
         self.assertEqual(new_response.status_code, status.HTTP_200_OK)
         self.assertEqual(new_response.get_json(), account.serialize())
+
+    def test_update_an_account(self):
+        """It should update an account if account exists and return a 404 if none."""
+        account = AccountFactory()
+        response_404 = self.client.post(
+            f'{BASE_URL}/1', 
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response_404.status_code, status.HTTP_404_NOT_FOUND)
+
+        create_account_response = self.client.post(
+            BASE_URL,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+
+        if create_account_response.status_code != status.HTTP_201_CREATED:
+            raise Exception(f"Expected the create endpoint to create an account.")
+
+        created_account_data = create_account_response.get_json()
+        
+        TEST_USER = 'Test User'
+        created_account_data['name'] = TEST_USER
+
+        updated_account_response = self.client.post(
+            f'{BASE_URL}/{created_account_data["id"]}', 
+            json=created_account_data,
+            content_type="application/json"
+        )
+
+        self.assertEqual(updated_account_response.status_code, status.HTTP_200_OK)
+        
+        updated_account_data = updated_account_response.get_json()
+        self.assertEqual(updated_account_data['name'], TEST_USER)
