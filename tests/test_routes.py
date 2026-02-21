@@ -182,3 +182,18 @@ class TestAccountService(TestCase):
         account_removed_response = self.client.get(f'{BASE_URL}/{account.id}')
         self.assertEqual(account_removed_response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_list_all_accounts(self):
+        """It should list all accounts or an empty list if none exists"""
+        response_empty = self.client.get(BASE_URL)
+        self.assertEqual(response_empty.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_empty.get_json(), [])
+
+        ACCOUNTS_COUNT = 12
+        created_accounts = self._create_accounts(ACCOUNTS_COUNT)
+        response_populated = self.client.get(BASE_URL)
+        self.assertEqual(response_populated.status_code, status.HTTP_200_OK)
+        response_accounts = response_populated.get_json()
+        self.assertEqual(
+            sorted(list(map(lambda account: (account.id, account.name), created_accounts))),
+            sorted(list(map(lambda account: (account['id'], account['name']), response_accounts)))
+        )
