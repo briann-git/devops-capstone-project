@@ -84,7 +84,7 @@ def reads_an_account(account_id):
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
-@app.route('/accounts/<account_id>', methods = ['POST'])
+@app.route('/accounts/<account_id>', methods = ['PUT'])
 def updates_an_account(account_id):
     account = Account.find(account_id)
     if account is None:

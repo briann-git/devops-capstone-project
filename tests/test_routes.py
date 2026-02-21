@@ -138,7 +138,7 @@ class TestAccountService(TestCase):
     def test_update_an_account(self):
         """It should update an account if account exists and return a 404 if none."""
         account = AccountFactory()
-        response_404 = self.client.post(
+        response_404 = self.client.put(
             f'{BASE_URL}/1', 
             json=account.serialize(),
             content_type="application/json"
@@ -159,7 +159,7 @@ class TestAccountService(TestCase):
         TEST_USER = 'Test User'
         created_account_data['name'] = TEST_USER
 
-        updated_account_response = self.client.post(
+        updated_account_response = self.client.put(
             f'{BASE_URL}/{created_account_data["id"]}', 
             json=created_account_data,
             content_type="application/json"
